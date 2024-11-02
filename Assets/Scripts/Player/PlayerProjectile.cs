@@ -6,9 +6,12 @@ public class PlayerProjectile : MonoBehaviour
 {
     [SerializeField] private float projectileLifeSpan;
 
+
+
     private float attackDamage;
     private Vector3 direction;
     private float speed;
+    private bool isPlayerDead = false;
 
     private void Start()
     {
@@ -17,6 +20,11 @@ public class PlayerProjectile : MonoBehaviour
 
     private void Update()
     {
+        if (isPlayerDead)
+        {
+            this.gameObject.SetActive(false);
+            return;
+        }
         transform.position += direction * speed * Time.deltaTime;
     }
 

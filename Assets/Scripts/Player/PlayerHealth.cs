@@ -14,11 +14,13 @@ public class PlayerHealth : MonoBehaviour, IDamageable
     private float currentHealth;
 
     private PlayerAnimation playerAnimation;
+    private CapsuleCollider2D capsuleCollider;
 
     private void Awake()
     {
         Instance = this;
         playerAnimation = GetComponent<PlayerAnimation>();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
     }
 
     private void Start()
@@ -35,9 +37,9 @@ public class PlayerHealth : MonoBehaviour, IDamageable
         if (currentHealth <= 0)
         {
             InputManager.Instance.gameObject.SetActive(false);
+            capsuleCollider.enabled = false;
             playerAnimation.TriggerDeathAnimation();
             onDeath?.Invoke();
-            //wait 2 second and show lose condition
         }
     }
 }

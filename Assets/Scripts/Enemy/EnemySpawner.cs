@@ -7,18 +7,14 @@ public class EnemySpawner : MonoBehaviour
 {
     public static EnemySpawner Instance;
 
-
-    public event Action onEnemySpawned;
-    public event Action onEnemyDespawned;
-
     [SerializeField] private GameObject [] enemyPrefab;
-    [SerializeField] private int totalEnemyPerMin = 1000;
+    [SerializeField] private int totalEnemy = 1000;
 
     private List<GameObject> enemyPool;
 
     private float spawnInterval = 1f / 16f;
     private float counter;
-    private int totalEnemy;
+    private int totalEnemySpawned;
 
     private void Awake()
     {
@@ -27,26 +23,25 @@ public class EnemySpawner : MonoBehaviour
 
     private void Start()
     {
-        totalEnemy = totalEnemyPerMin * GameManager.Instance.GetGameLength();
-
         enemyPool = new List<GameObject>();
         for (int i = 0; i < totalEnemy; i++)
         {
             GameObject enemy = Instantiate(enemyPrefab[UnityEngine.Random.Range(0, enemyPrefab.Length)]);
             enemy.GetComponent<CapsuleCollider2D>().enabled = false;
             enemy.SetActive(false);
-            onEnemyDespawned?.Invoke();
             enemyPool.Add(enemy);
         }
     }
 
     private void Update()
     {
+        if(totalEnemySpawned >= totalEnemy) { return; }
         counter += Time.deltaTime;
         if (counter >= spawnInterval)
         {
             SpawnEnemy();
-            onEnemySpawned?.Invoke();
+            totalEnemySpawned++;
+            GameManager.Instance.IncreaseActiveEnemy();
             counter = 0f;
         }
     }
@@ -74,5 +69,10 @@ public class EnemySpawner : MonoBehaviour
         return new Vector3(playerPosition.x + offsetX, playerPosition.y + offsetY, 0);
     }
 
+
+    public int GetTotalEnemyThisLevel()
+    {
+        return totalEnemy;
+    }
 }
 

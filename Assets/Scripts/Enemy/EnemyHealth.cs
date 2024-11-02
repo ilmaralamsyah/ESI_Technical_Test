@@ -25,6 +25,7 @@ public class EnemyHealth : MonoBehaviour, IDamageable
         if (currentHealth <= 0)
         {
             Instantiate(dropItem, transform.position, Quaternion.identity);
+            GameManager.Instance.DecreaseActiveEnemy();
             gameObject.SetActive(false);
         }
     }

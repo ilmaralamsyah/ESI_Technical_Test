@@ -39,6 +39,8 @@ public class PlayerAnimation : MonoBehaviour
     public void TriggerDeathAnimation()
     {
         animator.SetTrigger(DEATH);
+        Time.timeScale = 0f;
+        GameManager.Instance.ShowLoseCondition();
     }
 
     public void TriggerSwordAttackAnimation()

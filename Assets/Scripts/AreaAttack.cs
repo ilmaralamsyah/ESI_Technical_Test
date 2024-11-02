@@ -11,7 +11,7 @@ public class AreaAttack : MonoBehaviour
 
     void Update()
     {
-        pivot.transform.Rotate(Vector3.forward * areaAttackSpeed);
+        pivot.transform.Rotate(Vector3.forward * areaAttackSpeed * Time.deltaTime * 10);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
