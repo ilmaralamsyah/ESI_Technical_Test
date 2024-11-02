@@ -7,6 +7,10 @@ public class GameManager : MonoBehaviour
 
     public static GameManager Instance;
 
+    [Tooltip("In Minutes")]
+    [SerializeField] private int gameLength;
+
+    [Header("Game Data")]
     [SerializeField] private int totalCoin;
     [SerializeField] private int totalEnemyActive;
     [SerializeField] private int totalEnemyNotActive;
@@ -21,5 +25,10 @@ public class GameManager : MonoBehaviour
     {
         totalCoin += coin;
         Debug.Log(totalCoin);
+    }
+
+    public int GetGameLength()
+    {
+        return gameLength;
     }
 }

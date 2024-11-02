@@ -63,6 +63,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mage
       objectReference: {fileID: 0}
+    - target: {fileID: 5960515738987574149, guid: fef3176035082894fa9d5d2dc4fdef75, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6468205107942714760, guid: fef3176035082894fa9d5d2dc4fdef75, type: 3}
       propertyPath: attackType
       value: 1

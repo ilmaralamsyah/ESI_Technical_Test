@@ -7,7 +7,7 @@ public class Enemy : MonoBehaviour
 {
     [Header("Enemy Setting")]
     [SerializeField] private float enemySpeed = 100f;
-    
+
     [SerializeField] private float enemyAttackDistance;
     [SerializeField] private float enemyAttackCooldown;
     [SerializeField] private float enemyChaseRange;
@@ -15,21 +15,30 @@ public class Enemy : MonoBehaviour
     private EnemyAnimation enemyAnimation;
     private EnemyAttack enemyAttack;
     private SpriteRenderer spriteRenderer;
+    private CapsuleCollider2D capsuleCollider;
+
+
 
     private bool isPlayerDead = false;
     private float cooldownCounter;
+    private bool isColliderEnabled;
+    private float updateCounter;
+    private float updateTimerMax = 2f; //agar fungsi update dipanggil setiap 2 detik jika enemy jauh dari player
+    private bool isFarAway;
 
     private void Awake()
     {
         enemyAnimation = GetComponent<EnemyAnimation>();
         enemyAttack = GetComponent<EnemyAttack>();
         spriteRenderer = GetComponent<SpriteRenderer>();
+        capsuleCollider = GetComponent<CapsuleCollider2D>();
     }
 
     private void Start()
     {
         PlayerHealth.Instance.onDeath += Instance_onDeath;
         cooldownCounter = enemyAttackCooldown;
+        isColliderEnabled = capsuleCollider.enabled;
     }
 
     private void Instance_onDeath()
@@ -40,6 +49,15 @@ public class Enemy : MonoBehaviour
     private void Update()
     {
         if (isPlayerDead) { return; }
+        if (isFarAway)
+        {
+            updateCounter += Time.deltaTime;
+            if (updateCounter > updateTimerMax)
+            {
+                updateCounter = 0;
+            }
+            else { return; }
+        }
         CheckPlayerDistance();
     }
 
@@ -52,20 +70,35 @@ public class Enemy : MonoBehaviour
 
         if (playerDistance <= enemyChaseRange)
         {
-            if (playerDistance <= enemyAttackDistance)
-            {
-                enemyAnimation.PlayIdleAnimation();
-                HandleAttack();
-            }
-            else
-            {
-                MoveTo(playerPosition);
-                enemyAnimation.PlayChasingAnimation();
-            }
+            isFarAway = false;
+            PlayerInChaseRange(playerPosition, playerDistance);
         }
         else
         {
+            isFarAway = true;
+            if (isColliderEnabled)
+            {
+                capsuleCollider.enabled = false;
+            }
             enemyAnimation.PlayIdleAnimation();
+        }
+    }
+
+    private void PlayerInChaseRange(Vector3 playerPosition, float playerDistance)
+    {
+        if (!isColliderEnabled)
+        {
+            capsuleCollider.enabled = true;
+        }
+        if (playerDistance <= enemyAttackDistance)
+        {
+            enemyAnimation.PlayIdleAnimation();
+            HandleAttack();
+        }
+        else
+        {
+            MoveTo(playerPosition);
+            enemyAnimation.PlayChasingAnimation();
         }
     }
 
@@ -78,7 +111,7 @@ public class Enemy : MonoBehaviour
     private void HandleAttack()
     {
         cooldownCounter += Time.deltaTime;
-        if(cooldownCounter >= enemyAttackCooldown)
+        if (cooldownCounter >= enemyAttackCooldown)
         {
             cooldownCounter = 0;
             enemyAttack.AttackPlayer();
